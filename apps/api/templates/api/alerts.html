@@ -1,0 +1,105 @@
+{% extends base_template %}
+{% block title %}Web Message Tester{% endblock %}
+{% block javascripts %}
+<link type="text/css" href="/static/webapp/javascripts/jquery-ui-1.8.10/themes/base/jquery.ui.all.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="/static/webapp/stylesheets/smartcombo.css" />
+
+		<script type="text/javascript" src="/static/webapp/javascripts/jquery-ui-1.8.10/ui/jquery.ui.core.js"></script>
+		<script type="text/javascript" src="/static/webapp/javascripts/jquery-ui-1.8.10/ui/jquery.ui.widget.js"></script>
+		<script type="text/javascript" src="/static/webapp/javascripts/jquery-ui-1.8.10/ui/jquery.ui.button.js"></script>
+		<script type="text/javascript" src="/static/webapp/javascripts/jquery-ui-1.8.10/ui/jquery.ui.position.js"></script>
+		<script type="text/javascript" src="/static/webapp/javascripts/jquery-ui-1.8.10/ui/jquery.ui.autocomplete.js"></script>
+		<script type="text/javascript" src="/static/webapp/javascripts/smartcombo.js" ></script>
+
+
+<script type="text/javascript" src="/static/api/javascripts/api.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/api/stylesheets/api.css" />
+
+<script type="text/javascript">
+// window.onload = function() { document.getElementById('form_wrapper').style.display = 'none'; }
+
+function toggle(link, divid) {
+    var div = document.getElementById(divid);
+    if (div.style.display == 'none') {
+        div.style.display = 'block';
+        link.innerHTML = 'Hide Form';
+    } else {
+        div.style.display = 'none';
+        link.innerHTML = 'Show Form';
+    }
+}
+
+$(function(){
+    $("#locid").combobox({
+            selected: function(event, ui) {}
+         });
+
+});
+
+</script>
+		
+{% endblock %}
+{% block page_tabs %}
+<ul id="page-tabs">
+	
+	<li class="page active"><a href="/api/client">Alerts</a></li>
+</ul>
+{% endblock %}
+{% block content %}
+<style>
+	/* incoming/outgoing indicator [raq/laq]uo */
+	div.tester {
+		height: 14em;
+		overflow-y: scroll;
+	}
+	.tester table td.dir {
+		font-weight: bold;
+	}
+
+	/* colorize cells to indicate direction */
+	.tester tr.in  td.dir { color: #f00; }
+	.tester tr.in         { background: #fff8ff; }
+	.tester tr.out td.dir { color: #0f0; }
+	.tester tr.out        { background: #f8ffff; }
+
+	.tester tr td.phone    { color: #bbb; font-size: 70%; width: 8em; float: right; border-top: 0px;}
+	.tester tr td.dir      { border-top: 0px; }
+	.tester tr td.info    { color: #bbb; font-size: 70%; width: 8em; float: left;}
+	.tester tr td.msg     { font-size: 90%; float: left; width: 65em;}
+
+	#form_wrapper { margin-top: 1em; margin-left: 10em}
+	label { display:block;}
+	input { margin-bottom: 1em; width:20em; }
+	#message { height: 5em; }
+</style>
+<h2>Post Alert</h2>
+
+<h4><a href="#form_wrapper" onclick="toggle(this, 'form_wrapper'); return false;">Hide Form</a></h4>
+
+<div id="form_wrapper">
+	<form class="topstrip" name="alert_form" id="alert_form">
+	<label for="alert_type">Alert Type:&nbsp;<select name="alert_type" id="alert_type">
+		<option value="" ></option>
+		<option value="RISK" {% ifequal typ "RISK" %} selected="selected"{% endifequal %}>Risk Alert</option>
+		<option value="REMINDER" {% ifequal typ "REMINDER" %} selected="selected"{% endifequal %}>Reminder Alert</option></select></label>
+
+	<label for="alert_value">Description:<select name="alert_value" id="alert_value">
+		<option value="" ></option>
+                {%  for v in values %}<option value="{{ v.id }}" {% if v.selected %} selected="selected"{% endif %}>{% if v.key %}{{ v.key }}&nbsp;-&nbsp;{{v.description}}{%else%}{{ v }}{% endif %}</option>{%  endfor %}</select></label>
+	&nbsp;
+	<label for="rem_value">Value:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="rem_value" name="rem_value" value=""/></label>
+	<label for="patid">Patient ID: <input type="text" id="patid" name="patid" value="" /></label>
+	<label for="locid">Location: &nbsp;&nbsp;<select class="input-text" name="locid" id="locid"><option></option>{%  for loc in locations %}<option value="{{ loc.id }}" {% if loc.selected %} selected="selected" {% endif %}>{{ loc.name }}&nbsp;{{ loc.type.name }}</option>{%  endfor %}</select></label>
+	<label for="village">Village:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="text" id="village" name="village" value=""/></label>
+	<input type="submit" id="submit" name="submit" value="Send" />
+</form>
+</div>
+<h2>All Alerts</h2>
+<div class="tester" id="log">
+	<table>
+		<tbody id="log">
+		</tbody>
+	</table>
+</div>
+
+{% endblock %}
