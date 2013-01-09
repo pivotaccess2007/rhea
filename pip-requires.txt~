@@ -1,7 +1,0 @@
-django==1.3.1
-pytz
-xlrd
-MySQL-python
-django-piston
-hl7
-pygsm (sudo apt-get install git && pip install git+git://github.com/adammck/pygsm.git#egg=pygsm)
